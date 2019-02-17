@@ -1,5 +1,6 @@
 
 import argparse
+import re
 
 class DFA:
     def __init__(self, alphabet, initial_state, final_states, transitions, states, labels, actions):
@@ -40,8 +41,8 @@ def read_dfa_from_file(file_name):
             labels[splitted_tuple[0]] = splitted_tuple[1]
 
         actions = dict()
-        for action_tuple in lines[6].replace(' ', '').replace('\n','').replace("),(", "MYNAMEISMENIAWYSTOPLOOKINGATMYCODE").replace("(", "").replace(")","").split("MYNAMEISMENIAWYSTOPLOOKINGATMYCODE"):
-            splitted_tuple = [element for element in action_tuple.split(",")]
+        for action_tuple in lines[6].replace(', ', ',').replace('\n','').replace("),(", "MYNAMEISMENIAWYSTOPLOOKINGATMYCODE").replace("(", "").replace(")","").split("MYNAMEISMENIAWYSTOPLOOKINGATMYCODE"):
+            splitted_tuple = [element.strip() for element in action_tuple.split(",")]
             actions[splitted_tuple[0]] = splitted_tuple[1]
 
 
@@ -50,7 +51,7 @@ def read_dfa_from_file(file_name):
 
 def check_string(dfa, string):
     res = ''
-    l = r = 0
+    l = 0
     latest_accept_idx = -1
     latest_accept_state = -1
     
@@ -79,9 +80,6 @@ def check_string(dfa, string):
             l = latest_accept_idx + 1
 
     return res
-
-
-
 
 
 if __name__ == '__main__':
