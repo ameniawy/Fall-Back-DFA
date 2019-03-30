@@ -1,4 +1,1 @@
-x, "Hello world"
-xy, "Bye World"
-xy, "Bye World"
-yxxxyy, "Fail!"
+b, "Fail!"

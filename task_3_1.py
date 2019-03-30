@@ -2,6 +2,7 @@
 import argparse
 import re
 
+
 class DFA:
     def __init__(self, alphabet, initial_state, final_states, transitions, states, labels, actions):
         self.alphabet = alphabet
@@ -25,8 +26,9 @@ def read_dfa_from_file(file_name):
         initial_state = lines[2].strip()
         final_states = [state.strip() for state in lines[3].split(',')]
         transitions = list()
-        for transition_tuple in lines[4].replace(" ","").replace("),(", "|").replace("(", "").replace(")","").split("|"):
-            splitted_tuple = [element.strip() if element != '' else ' ' for element in transition_tuple.split(",")]
+        for transition_tuple in lines[4].replace(" ", "").replace("),(", "|").replace("(", "").replace(")", "").split("|"):
+            splitted_tuple = [element.strip(
+            ) if element != '' else ' ' for element in transition_tuple.split(",")]
             transition = {
                 'arc_from': splitted_tuple[0],
                 'arc_condition': splitted_tuple[1],
@@ -36,16 +38,16 @@ def read_dfa_from_file(file_name):
 
         labels = dict()
 
-        for label_tuple in lines[5].replace(' ', '').replace('\n','').replace("),(", "MYNAMEISMENIAWYSTOPLOOKINGATMYCODE").replace("(", "").replace(")","").split("MYNAMEISMENIAWYSTOPLOOKINGATMYCODE"):
+        for label_tuple in lines[5].replace(' ', '').replace('\n', '').replace("),(", "MYNAMEISMENIAWYSTOPLOOKINGATMYCODE").replace("(", "").replace(")", "").split("MYNAMEISMENIAWYSTOPLOOKINGATMYCODE"):
             splitted_tuple = [element for element in label_tuple.split(",")]
             labels[splitted_tuple[0]] = splitted_tuple[1]
 
         actions = dict()
-        for action_tuple in lines[6].replace(', ', ',').replace('\n','').replace("),(", "MYNAMEISMENIAWYSTOPLOOKINGATMYCODE").replace("(", "").replace(")","").split("MYNAMEISMENIAWYSTOPLOOKINGATMYCODE"):
-            splitted_tuple = [element.strip() for element in action_tuple.split(",")]
+        for action_tuple in lines[6].replace(', ', ',').replace('\n', '').replace("),(", "MYNAMEISMENIAWYSTOPLOOKINGATMYCODE").replace("(", "").replace(")", "").split("MYNAMEISMENIAWYSTOPLOOKINGATMYCODE"):
+            splitted_tuple = [element.strip()
+                              for element in action_tuple.split(",")]
             actions[splitted_tuple[0]] = splitted_tuple[1]
-
-
+        print(labels)
         return DFA(alphabet, initial_state, final_states, transitions, states, labels, actions)
 
 
@@ -54,7 +56,7 @@ def check_string(dfa, string):
     l = 0
     latest_accept_idx = -1
     latest_accept_state = -1
-    
+
     while(True):
         if l >= len(string):
             break
@@ -72,22 +74,29 @@ def check_string(dfa, string):
                     break
 
         if latest_accept_idx == -1:
-            res = string + ', ' + dfa.actions[dfa.labels['DEAD']]
+            if 'DEAD' in dfa.labels:
+                res = string + ', ' + dfa.actions[dfa.labels['DEAD']]
+            else:
+                res = string + ', ' + dfa.actions['"DEFAULT"']
             break
         else:
             chunk = string[l:latest_accept_idx + 1]
-            res = res + chunk + ', ' + dfa.actions[dfa.labels[latest_accept_state]] + '\n'
+            res = res + chunk + ', ' + \
+                dfa.actions[dfa.labels[latest_accept_state]] + '\n'
             l = latest_accept_idx + 1
 
     return res
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(add_help=True, description='Sample Commandline')
+    parser = argparse.ArgumentParser(
+        add_help=True, description='Sample Commandline')
 
-    parser.add_argument('--dfa-file', action="store", help="path of file to take as input to construct DFA", nargs="?", metavar="dfa_file")
-    parser.add_argument('--input-file', action="store", help="path of file to take as input to test strings in on DFA", nargs="?", metavar="input_file")
-    
+    parser.add_argument('--dfa-file', action="store",
+                        help="path of file to take as input to construct DFA", nargs="?", metavar="dfa_file")
+    parser.add_argument('--input-file', action="store",
+                        help="path of file to take as input to test strings in on DFA", nargs="?", metavar="input_file")
+
     args = parser.parse_args()
 
     loaded_dfa = read_dfa_from_file(args.dfa_file)
